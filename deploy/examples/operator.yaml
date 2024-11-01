@@ -23,21 +23,21 @@ metadata:
   namespace: rook-ceph # namespace:operator
 data:
   # The logging level for the operator: ERROR | WARNING | INFO | DEBUG
-  ROOK_LOG_LEVEL: "INFO"
+  ROOK_LOG_LEVEL: "DEBUG"
 
   # The address for the operator's controller-runtime metrics. 0 is disabled. :8080 serves metrics on port 8080.
-  ROOK_OPERATOR_METRICS_BIND_ADDRESS: "0"
+  ROOK_OPERATOR_METRICS_BIND_ADDRESS: "8080"
 
   # Allow using loop devices for osds in test clusters.
   ROOK_CEPH_ALLOW_LOOP_DEVICES: "false"
 
   # Enable CSI Operator
-  ROOK_USE_CSI_OPERATOR: "false"
+  ROOK_USE_CSI_OPERATOR: "true"
   # Enable the CSI driver.
   # To run the non-default version of the CSI driver, see the override-able image properties in operator.yaml
   ROOK_CSI_ENABLE_CEPHFS: "true"
   # Enable the default version of the CSI RBD driver. To start another version of the CSI driver, see image properties below.
-  ROOK_CSI_ENABLE_RBD: "true"
+  ROOK_CSI_ENABLE_RBD: "false"
   # Enable the CSI NFS driver. To start another version of the CSI driver, see image properties below.
   ROOK_CSI_ENABLE_NFS: "false"
   # Disable the CSI driver.
@@ -59,19 +59,19 @@ data:
   # Set to true to enable adding volume metadata on the CephFS subvolume and RBD images.
   # Not all users might be interested in getting volume/snapshot details as metadata on CephFS subvolume and RBD images.
   # Hence enable metadata is false by default.
-  # CSI_ENABLE_METADATA: "true"
+  CSI_ENABLE_METADATA: "true"
 
   # cluster name identifier to set as metadata on the CephFS subvolume and RBD images. This will be useful in cases
   # like for example, when two container orchestrator clusters (Kubernetes/OCP) are using a single ceph cluster.
-  # CSI_CLUSTER_NAME: "my-prod-cluster"
+  CSI_CLUSTER_NAME: "ayojon"
 
   # Set logging level for cephCSI containers maintained by the cephCSI.
   # Supported values from 0 to 5. 0 for general useful logs, 5 for trace level verbosity.
-  # CSI_LOG_LEVEL: "0"
+  CSI_LOG_LEVEL: "5"
 
   # Set logging level for Kubernetes-csi sidecar containers.
   # Supported values from 0 to 5. 0 for general useful logs (the default), 5 for trace level verbosity.
-  # CSI_SIDECAR_LOG_LEVEL: "0"
+  CSI_SIDECAR_LOG_LEVEL: "5"
 
   # csi driver name prefix for cephfs, rbd and nfs. if not specified, default
   # will be the namespace name where rook-ceph operator is deployed.
@@ -135,7 +135,7 @@ data:
   # ROOK_CSI_ATTACHER_IMAGE: "registry.k8s.io/sig-storage/csi-attacher:v4.6.1"
 
   # To indicate the image pull policy to be applied to all the containers in the csi driver pods.
-  # ROOK_CSI_IMAGE_PULL_POLICY: "IfNotPresent"
+  ROOK_CSI_IMAGE_PULL_POLICY: "IfNotPresent"
 
   # (Optional) set user created priorityclassName for csi plugin pods.
   CSI_PLUGIN_PRIORITY_CLASSNAME: "system-node-critical"
@@ -161,7 +161,7 @@ data:
   # CSI_NFS_PLUGIN_UPDATE_STRATEGY: "OnDelete"
 
   # kubelet directory path, if kubelet configured to use other than /var/lib/kubelet path.
-  # ROOK_CSI_KUBELET_DIR_PATH: "/var/lib/kubelet"
+  ROOK_CSI_KUBELET_DIR_PATH: "/var/lib/k0s/kubelet"
 
   # Labels to add to the CSI CephFS Deployments and DaemonSets Pods.
   # ROOK_CSI_CEPHFS_POD_LABELS: "key1=value1,key2=value2"
@@ -201,7 +201,7 @@ data:
   #    readOnly: true
 
   # (Optional) CephCSI provisioner NodeAffinity (applied to both CephFS and RBD provisioner).
-  # CSI_PROVISIONER_NODE_AFFINITY: "role=storage-node; storage=rook, ceph"
+  CSI_PROVISIONER_NODE_AFFINITY: "csi.rook=true"
   # (Optional) CephCSI provisioner tolerations list(applied to both CephFS and RBD provisioner).
   # Put here list of taints you want to tolerate in YAML format.
   # CSI provisioner would be best to start on the same nodes as other ceph daemons.
@@ -213,7 +213,7 @@ data:
   #     key: node-role.kubernetes.io/etcd
   #     operator: Exists
   # (Optional) CephCSI plugin NodeAffinity (applied to both CephFS and RBD plugin).
-  # CSI_PLUGIN_NODE_AFFINITY: "role=storage-node; storage=rook, ceph"
+  CSI_PLUGIN_NODE_AFFINITY: "csi.rook.plugin=true"
   # (Optional) CephCSI plugin tolerations list(applied to both CephFS and RBD plugin).
   # Put here list of taints you want to tolerate in YAML format.
   # CSI plugins need to be started on all the nodes where the clients need to mount the storage.
@@ -243,7 +243,7 @@ data:
   #     operator: Exists
 
   # (Optional) CephCSI CephFS provisioner NodeAffinity (if specified, overrides CSI_PROVISIONER_NODE_AFFINITY).
-  # CSI_CEPHFS_PROVISIONER_NODE_AFFINITY: "role=cephfs-node"
+  CSI_CEPHFS_PROVISIONER_NODE_AFFINITY: "csi.rook.cephfs=true"
   # (Optional) CephCSI CephFS provisioner tolerations list(if specified, overrides CSI_PROVISIONER_TOLERATIONS).
   # Put here list of taints you want to tolerate in YAML format.
   # CSI provisioner would be best to start on the same nodes as other ceph daemons.
@@ -251,7 +251,7 @@ data:
   #   - key: node.rook.io/cephfs
   #     operator: Exists
   # (Optional) CephCSI CephFS plugin NodeAffinity (if specified, overrides CSI_PLUGIN_NODE_AFFINITY).
-  # CSI_CEPHFS_PLUGIN_NODE_AFFINITY: "role=cephfs-node"
+  CSI_CEPHFS_PLUGIN_NODE_AFFINITY: "csi.rook.cephfs.plugin=true"
   # NOTE: Support for defining NodeAffinity for operators other than "In" and "Exists" requires the user to input a
   # valid v1.NodeAffinity JSON or YAML string. For example, the following is valid YAML v1.NodeAffinity:
   # CSI_CEPHFS_PLUGIN_NODE_AFFINITY: |
@@ -474,7 +474,7 @@ data:
 
   # Configure CSI CephFS liveness metrics port
   # Set to true to enable Ceph CSI liveness container.
-  CSI_ENABLE_LIVENESS: "false"
+  CSI_ENABLE_LIVENESS: "true"
   # CSI_CEPHFS_LIVENESS_METRICS_PORT: "9081"
   # Configure CSI RBD liveness metrics port
   # CSI_RBD_LIVENESS_METRICS_PORT: "9080"
@@ -501,11 +501,11 @@ data:
 
   # Whether to start the discovery daemon to watch for raw storage devices on nodes in the cluster.
   # This daemon does not need to run if you are only going to create your OSDs based on StorageClassDeviceSets with PVCs.
-  ROOK_ENABLE_DISCOVERY_DAEMON: "false"
+  ROOK_ENABLE_DISCOVERY_DAEMON: "true"
   # The timeout value (in seconds) of Ceph commands. It should be >= 1. If this variable is not set or is an invalid value, it's default to 15.
   ROOK_CEPH_COMMANDS_TIMEOUT_SECONDS: "15"
   # Enable the csi addons sidecar.
-  CSI_ENABLE_CSIADDONS: "false"
+  CSI_ENABLE_CSIADDONS: "true"
   # Enable watch for faster recovery from rbd rwo node loss
   ROOK_WATCH_FOR_NODE_FAILURE: "true"
   # ROOK_CSIADDONS_IMAGE: "quay.io/csiaddons/k8s-sidecar:v0.9.1"
@@ -551,7 +551,7 @@ data:
   # (Optional) Discover Agent Pod Labels.
   # DISCOVER_AGENT_POD_LABELS: "key1=value1,key2=value2"
   # Disable automatic orchestration when new devices are discovered
-  ROOK_DISABLE_DEVICE_HOTPLUG: "false"
+  ROOK_DISABLE_DEVICE_HOTPLUG: "true"
   # The duration between discovering devices in the rook-discover daemonset.
   ROOK_DISCOVER_DEVICES_INTERVAL: "60m"
   # DISCOVER_DAEMON_RESOURCES: |

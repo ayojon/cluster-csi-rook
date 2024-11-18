@@ -9,20 +9,23 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: rook-ceph-mgr-dashboard
-  namespace: rook-ceph # namespace:cluster
+  namespace: rook-ceph
   annotations:
-    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: "cloudflare-clusterissuer"
+    ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/server-snippet: |
       proxy_ssl_verify off;
+      proxy_ssl_protocols TLSv1.2 TLSv1.3;
+      proxy_ssl_ciphers HIGH:!aNULL:!MD5;
 spec:
   ingressClassName: "nginx"
   tls:
     - hosts:
-        - rook-ceph.example.com
-      secretName: rook-ceph.example.com
+        - test.rook-ceph-mgr-dashboard.ayojon.net
+      secretName: test-rook-ceph-mgr-dashboard-tls
   rules:
-    - host: rook-ceph.example.com
+    - host: test.rook-ceph-mgr-dashboard.ayojon.net
       http:
         paths:
           - path: /

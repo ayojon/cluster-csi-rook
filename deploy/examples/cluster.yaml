@@ -111,7 +111,7 @@ spec:
       # Whether to require communication over msgr2. If true, the msgr v1 port (6789) will be disabled
       # and clients will be required to connect to the Ceph cluster with the v2 port (3300).
       # Requires a kernel that supports msgr v2 (kernel 5.11 or CentOS 8.4 or newer).
-      requireMsgr2: false
+      requireMsgr2: true
     # enable host networking
     #provider: host
     # enable the Multus network provider
@@ -260,8 +260,8 @@ spec:
     mgr: system-cluster-critical
     #crashcollector: rook-ceph-crashcollector-priority-class
   storage: # cluster level storage configuration and selection
-    useAllNodes: true
-    useAllDevices: true
+    useAllNodes: false
+    useAllDevices: false
     #deviceFilter:
     config:
       # crushRoot: "custom-root" # specify a non-default root label for the CRUSH map
@@ -285,6 +285,19 @@ spec:
     #     config: # configuration can be specified at the node level which overrides the cluster level config
     #   - name: "172.17.4.301"
     #     deviceFilter: "^sd."
+    nodes:
+      - name: "ayojon-2"
+        devices:
+          - name: "sda"
+      - name: "ayojon-3"
+        devices:
+          - name: "sda"
+      - name: "ayojon-4"
+        devices:
+          - name: "sda"
+      - name: "ayojon-5"
+        devices:
+          - name: "sda"
     # when onlyApplyOSDPlacement is false, will merge both placement.All() and placement.osd
     onlyApplyOSDPlacement: false
     # Time for which an OSD pod will sleep before restarting, if it stopped due to flapping
@@ -316,7 +329,7 @@ spec:
       # Enabling the read affinity may cause the OSDs to consume some extra memory.
       # For more details see this doc:
       # https://rook.io/docs/rook/latest/Storage-Configuration/Ceph-CSI/ceph-csi-drivers/#enable-read-affinity-for-rbd-volumes
-      enabled: false
+      enabled: true
 
     # cephfs driver specific settings.
     cephfs:
